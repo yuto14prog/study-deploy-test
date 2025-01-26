@@ -1,0 +1,51 @@
+services:
+  express:
+    container_name: express
+    build: ./express
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    tty: true
+    volumes:
+      - ./express:/app
+    networks:
+      app-network:
+        ipv4_address: 192.168.1.10
+  db:
+    container_name: db
+    build: ./db
+    ports:
+      - 3306:3306
+    tty: true
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: app
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user_password
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d
+    networks:
+      app-network:
+        ipv4_address: 192.168.1.11
+  front:
+    container_name: front
+    build: ./front
+    ports:
+      - 5173:5173
+    depends_on:
+      - express
+    tty: true
+    volumes:
+      - ./front:/app
+    networks:
+      app-network:
+        ipv4_address: 192.168.1.12
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
+          gateway: 192.168.1.1
