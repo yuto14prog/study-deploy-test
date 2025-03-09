@@ -1,2 +1,2 @@
 CREATE DATABASE IF NOT EXISTS `app`;
-GRANT ALL ON app.* TO 'user'@'%';
+GRANT ALL ON *.* TO 'user'@'%';
